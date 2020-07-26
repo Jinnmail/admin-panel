@@ -3,7 +3,6 @@
 This is only an admin panel, so there is no need for a test environment
 
 ## First Deployment
-<br>
 ```
 create new ubuntu 20.04 micro instance
 sudo apt update
