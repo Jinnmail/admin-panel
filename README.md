@@ -45,6 +45,11 @@ exit
 ```
 cd /var/www/html
 git pull
+screen -x tab
 npm run build
+serve -s build
+detach from screen
+ctrl a d
 sudo service apache2 restart
+exit
 ```
