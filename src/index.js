@@ -25,7 +25,18 @@ class UsersTable extends React.Component {
     const filterText = this.props.filterText;
     const rows = [];
 
-    this.props.users.forEach((user, i) => {
+    let sortedUsers = [...this.props.users];
+    sortedUsers.sort((a, b) => {
+      if (a.email < b.email) {
+        return -1;
+      }
+      if (a.email > b.email) {
+        return 1;
+      }
+      return 0;
+    });
+
+    sortedUsers.forEach((user, i) => {
       if (user.email.indexOf(filterText) === -1) {
         return;
       }
