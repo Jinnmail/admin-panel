@@ -2,6 +2,12 @@
 
 This is only an admin panel, so there is no need for a test environment
 
+## Dev
+```
+npm install
+npm start
+```
+
 ## First Deployment
 ```
 create new ubuntu 20.04 micro instance

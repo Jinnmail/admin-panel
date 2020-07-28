@@ -173,6 +173,7 @@ class FilteredUsersTable extends React.Component {
                 <p>Alias Id: {alias.aliasId}</p>
                 <p>Alias: {alias.alias}</p>
                 <p>Timestamp: {alias.created}</p>
+                <p>Type: {alias.type}</p>
               </div>
             ) : (
               <div></div>
