@@ -109,7 +109,9 @@ class FilteredUsersTable extends React.Component {
       user: {
         // ...prevState.user,
         userId: user.data[0].userId,
-        email: user.data[0].email,   
+        email: user.data[0].email, 
+        created: user.data[0].created,  
+        aliasesCount: user.data[0].aliasesCount,   
         aliases: user.data[0].aliases
       }
     }));
@@ -151,6 +153,8 @@ class FilteredUsersTable extends React.Component {
               <div>
                 <p>User Id: {user.userId}</p>
                 <p>User Email: {user.email}</p>
+                <p>Timestamp: {user.created}</p>
+          <p>Alias Count: {user.aliasesCount}</p>
                 {
                   user.aliases.map(alias => (
                     <li>
@@ -168,6 +172,7 @@ class FilteredUsersTable extends React.Component {
               <div>
                 <p>Alias Id: {alias.aliasId}</p>
                 <p>Alias: {alias.alias}</p>
+                <p>Timestamp: {alias.created}</p>
               </div>
             ) : (
               <div></div>
