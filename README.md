@@ -46,6 +46,7 @@ exit
 cd /var/www/html
 git pull
 screen -x tab
+ctrl c
 npm run build
 serve -s build
 detach from screen
