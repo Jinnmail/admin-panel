@@ -174,6 +174,7 @@ class FilteredUsersTable extends React.Component {
                 <p>Alias: {alias.alias}</p>
                 <p>Timestamp: {alias.created}</p>
                 <p>Type: {alias.type}</p>
+                <p>Message Count: {alias.mailCount}</p>
               </div>
             ) : (
               <div></div>
