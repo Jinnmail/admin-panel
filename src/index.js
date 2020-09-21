@@ -25,7 +25,7 @@ class UsersTable extends React.Component {
   render() {
     const filterText = this.props.filterText;
     const rows = [];
-
+    
     let sortedUsers = [...this.props.users];
     sortedUsers.sort((a, b) => {
       if (a.email < b.email) {
@@ -155,6 +155,7 @@ class FilteredUsersTable extends React.Component {
               <div>
                 <p>User Id: {user.userId}</p>
                 <p>User Email: {user.email}</p>
+                <p>Customer Id: {user.customerId}</p>
                 <p>Timestamp: {user.created}</p>
           <p>Alias Count: {user.aliasesCount}</p>
                 {
