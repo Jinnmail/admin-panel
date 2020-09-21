@@ -23,6 +23,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # other files
-.env
+.env.local
 .unotes/
 .vscode/
