@@ -14,6 +14,7 @@ class UserRow extends React.Component {
       <tr>
         <td>{user.userId}</td>
         <td>{user.email}</td>
+        <td>{user.premium.toString()}</td>
         <td><button onClick={() => this.props.userDetailsClicked(user.userId)}>Details</button></td>
       </tr>
     );
@@ -49,6 +50,7 @@ class UsersTable extends React.Component {
           <tr>
             <th>User Id</th>
             <th>Email</th>
+            <th>Premium</th>
           </tr>
         </thead>
         <tbody>{rows}</tbody>
