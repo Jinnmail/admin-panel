@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link, Redirect, withRouter } from "react-router-dom";
 
 class UserRow extends React.Component {
   render() {
@@ -77,12 +77,13 @@ class SearchBar extends React.Component {
   }
 }
 
-class FilteredUsersTable extends React.Component {
+class FilteredUsersTableOrig extends React.Component {
   state = {
     users: null, 
     user: null, 
     alias: null, 
-    filterText: '' 
+    filterText: '', 
+    aliases: null
   };
 
   async componentDidMount() {
@@ -127,66 +128,109 @@ class FilteredUsersTable extends React.Component {
     this.setState({alias: json.data[0]});
   }
 
+  allAliasesClicked = async () => {
+    const location = {
+      pathname: '/aliases',
+      state: { prevPath: window.location.pathname}
+    }
+    this.props.history.push(location)
+  }
+
   render() {
     const user = this.state.user;
     const alias = this.state.alias;
     return (
-      <div class="col-container">
-        <div class="col-1">
-          <h2>Users</h2>
-          <SearchBar 
-            filterText={this.state.filterText}
-            filterTextChanged={this.filterTextChanged}
-          />
-          {this.state.users ? (
-              <UsersTable
-                  users={this.state.users}
-                  filterText={this.state.filterText}
-                  userDetailsClicked={this.userDetailsClicked}
-              />
-            ) : (
-              <div>xx</div>
-            )
-          }
+      <>
+        <div class="col-container">
+          <div class="col-2">&nbsp;</div>
+          <div class="col-2"><button onClick={this.allAliasesClicked}>All Aliases</button></div>
+          <div class="col-1">&nbsp;</div>
         </div>
-        <div class="col-2">
-          <h2>User Details</h2>
-          {user ? (
-              <div>
-                <p>User Id: {user.userId}</p>
-                <p>User Email: {user.email}</p>
-                <p>Customer Id: {user.customerId}</p>
-                <p>Timestamp: {user.created}</p>
-          <p>Alias Count: {user.aliasesCount}</p>
-                {
-                  user.aliases.map(alias => (
-                    <li>
-                      Alias: {alias.alias} <button onClick={() => this.aliasDetailsClicked(alias.aliasId)}>Details</button>
-                    </li>
-                  ))
-                }
-              </div>
-            ) : (<p></p>)
-          }
+        <div class="col-container">
+          <div class="col-1">
+            <h2>Users</h2>
+            <SearchBar 
+              filterText={this.state.filterText}
+              filterTextChanged={this.filterTextChanged}
+            />
+            {this.state.users ? (
+                <UsersTable
+                    users={this.state.users}
+                    filterText={this.state.filterText}
+                    userDetailsClicked={this.userDetailsClicked}
+                />
+              ) : (
+                <div>xx</div>
+              )
+            }
+          </div>
+          <div class="col-2">
+            <h2>User Details</h2>
+            {user ? (
+                <div>
+                  <p>User Id: {user.userId}</p>
+                  <p>User Email: {user.email}</p>
+                  <p>Customer Id: {user.customerId}</p>
+                  <p>Timestamp: {user.created}</p>
+                  <p>Alias Count: {user.aliasesCount}</p>
+                  {
+                    user.aliases.map(alias => (
+                      <li>
+                        Alias: {alias.alias} <button onClick={() => this.aliasDetailsClicked(alias.aliasId)}>Details</button>
+                      </li>
+                    ))
+                  }
+                </div>
+              ) : (<p></p>)
+            }
+          </div>
+          <div class="col-2">
+            <h2>Alias Details</h2>
+            {alias ? (
+                <div>
+                  <p>Alias Id: {alias.aliasId}</p>
+                  <p>Alias: {alias.alias}</p>
+                  <p>Timestamp: {alias.created}</p>
+                  <p>Type: {alias.type}</p>
+                  <p>Message Count: {alias.mailCount}</p>
+                </div>
+              ) : (
+                <div></div>
+              )
+            }
+          </div>
         </div>
-        <div class="col-2">
-          <h2>Alias Details</h2>
-          {alias ? (
-              <div>
-                <p>Alias Id: {alias.aliasId}</p>
-                <p>Alias: {alias.alias}</p>
-                <p>Timestamp: {alias.created}</p>
-                <p>Type: {alias.type}</p>
-                <p>Message Count: {alias.mailCount}</p>
-              </div>
-            ) : (
-              <div></div>
-            )
-          }
-        </div>
-      </div>
+      </>
     );
   }
+}
+
+const FilteredUsersTable = withRouter(FilteredUsersTableOrig);
+
+const Aliases = (props) => {
+  const [aliases, setAliases] = React.useState([]);
+
+  useEffect(() => {
+    async function fetchAliases() {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/admin/aliases`,
+        {
+          headers: { 'Authorization': localStorage.getItem('token') }
+        })
+      const aliases = await res.json()
+      setAliases(aliases.data);
+    }
+    fetchAliases();
+  }, [])
+  
+  return (
+    <div>
+      {
+        aliases.map(alias => (
+          <div>{alias.created} {alias.alias}</div>
+        ))
+      }
+    </div>
+  )
 }
 
 class Main extends React.Component {
@@ -222,6 +266,9 @@ class Main extends React.Component {
           </Route>
           <Route path="/dashboard">
             {localStorage.getItem('token') ? <FilteredUsersTable /> : <div></div>}
+          </Route>
+          <Route path="/Aliases">
+            <Aliases />
           </Route>
         </Switch>
       </Router>
