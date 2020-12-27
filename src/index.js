@@ -234,7 +234,7 @@ const Aliases = (props) => {
       <tbody>
       {
         aliases.map(alias => (
-          <tr><td>{alias.created}</td><td>{alias.alias}</td></tr>
+          <tr><td>{new Date(alias.created).toString()}</td><td>{alias.alias}</td></tr>
         ))
       }
       </tbody>
