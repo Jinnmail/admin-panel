@@ -203,6 +203,7 @@ class FilteredUsersTableOrig extends React.Component {
       </>
     );
   }
+
 }
 
 const FilteredUsersTable = withRouter(FilteredUsersTableOrig);
@@ -223,13 +224,21 @@ const Aliases = (props) => {
   }, [])
   
   return (
-    <div>
+    <table>
+      <thead>
+        <tr>
+          <th>Created</th>
+          <th>Alias</th>
+        </tr>
+      </thead>
+      <tbody>
       {
         aliases.map(alias => (
-          <div>{alias.created} {alias.alias}</div>
+          <tr><td>{alias.created}</td><td>{alias.alias}</td></tr>
         ))
       }
-    </div>
+      </tbody>
+    </table>
   )
 }
 
