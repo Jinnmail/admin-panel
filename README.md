@@ -48,11 +48,9 @@ exit
 ## Subsequent Deployments
 ```
 cd /var/www/html
-git pull
 screen -x tab
 ctrl c
-npm run build
-serve -s build
+git pull && npm run build && serve -s build
 detach from screen
 ctrl a d
 sudo service apache2 restart
