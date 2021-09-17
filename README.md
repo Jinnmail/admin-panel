@@ -55,4 +55,5 @@ detach from screen
 ctrl a d
 sudo service apache2 restart
 exit
+NOTE: you might have to sudo reboot and not use screen to build on small machine
 ```
