@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
@@ -15,7 +15,7 @@ class UserRow extends React.Component {
         <td>{user.userId}</td>
         <td>{user.email}</td>
         <td>{user.premium.toString()}</td>
-        <td><button onClick={() => this.props.userDetailsClicked(user.userId)}>Details</button></td>
+        <td><button id={user.userId} onClick={() => this.props.userDetailsClicked(user.userId)}>Details</button></td>
       </tr>
     );
   }
@@ -25,7 +25,7 @@ class UsersTable extends React.Component {
   render() {
     const filterText = this.props.filterText;
     const rows = [];
-    
+
     let sortedUsers = [...this.props.users];
     sortedUsers.sort((a, b) => {
       if (a.email < b.email) {
@@ -45,16 +45,18 @@ class UsersTable extends React.Component {
     });
 
     return (
-      <table>
-        <thead>
-          <tr>
-            <th>User Id</th>
-            <th>Email</th>
-            <th>Premium</th>
-          </tr>
-        </thead>
-        <tbody>{rows}</tbody>
-      </table>
+      <div class="scrollit">
+        <table>
+          <thead>
+            <tr>
+              <th>User Id</th>
+              <th>Email</th>
+              <th>Premium</th>
+            </tr>
+          </thead>
+          <tbody>{rows}</tbody>
+        </table>
+      </div>
     );
 
     return (<div></div>)
@@ -70,7 +72,7 @@ class SearchBar extends React.Component {
           placeholder="Search..."
           value={this.props.filterText}
           onChange={e => this.props.filterTextChanged(e.target.value)}
-          // onChange={this.handleFilterTextChange}
+        // onChange={this.handleFilterTextChange}
         />
       </form>
     );
@@ -79,59 +81,62 @@ class SearchBar extends React.Component {
 
 class FilteredUsersTableOrig extends React.Component {
   state = {
-    users: null, 
-    user: null, 
-    alias: null, 
-    filterText: '', 
+    users: null,
+    user: null,
+    alias: null,
+    filterText: '',
     aliases: null
   };
 
   async componentDidMount() {
-    const res = await fetch(`${process.env.REACT_APP_API_URL}/user`, 
-      {headers: {'Authorization': localStorage.getItem('token')}
-    })
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/user`,
+      {
+        headers: { 'Authorization': localStorage.getItem('token') }
+      })
     const users = await res.json()
-    this.setState({users: users})
+    this.setState({ users: users })
   }
 
   filterTextChanged = (filterText) => {
     this.setState({
-      user: null, 
-      alias: null, 
+      user: null,
+      alias: null,
       filterText: filterText
     });
   }
 
   userDetailsClicked = async (userId) => {
-    this.setState({alias: null})
-    const res = await fetch(`${process.env.REACT_APP_API_URL}/admin/user/${userId}`, 
-      {headers: {'Authorization': localStorage.getItem('token')}
-    })
+    this.setState({ alias: null })
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/admin/user/${userId}`,
+      {
+        headers: { 'Authorization': localStorage.getItem('token') }
+      })
     const user = await res.json();
     this.setState(prevState => ({
       user: {
         // ...prevState.user,
         userId: user.data[0].userId,
-        email: user.data[0].email, 
-        created: user.data[0].created,  
-        aliasesCount: user.data[0].aliasesCount,   
+        email: user.data[0].email,
+        created: user.data[0].created,
+        aliasesCount: user.data[0].aliasesCount,
         aliases: user.data[0].aliases
       }
     }));
   }
 
   aliasDetailsClicked = async (aliasId) => {
-    const res = await fetch(`${process.env.REACT_APP_API_URL}/admin/alias/${aliasId}`, 
-      {headers: {'Authorization': localStorage.getItem('token')}
-    })
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/admin/alias/${aliasId}`,
+      {
+        headers: { 'Authorization': localStorage.getItem('token') }
+      })
     const json = await res.json();
-    this.setState({alias: json.data[0]});
+    this.setState({ alias: json.data[0] });
   }
 
   allAliasesClicked = async () => {
     const location = {
       pathname: '/aliases',
-      state: { prevPath: window.location.pathname}
+      state: { prevPath: window.location.pathname }
     }
     this.props.history.push(location)
   }
@@ -149,54 +154,54 @@ class FilteredUsersTableOrig extends React.Component {
         <div class="col-container">
           <div class="col-1">
             <h2>Users</h2>
-            <SearchBar 
+            <SearchBar
               filterText={this.state.filterText}
               filterTextChanged={this.filterTextChanged}
             />
             {this.state.users ? (
-                <UsersTable
-                    users={this.state.users}
-                    filterText={this.state.filterText}
-                    userDetailsClicked={this.userDetailsClicked}
-                />
-              ) : (
-                <div>xx</div>
-              )
+              <UsersTable
+                users={this.state.users}
+                filterText={this.state.filterText}
+                userDetailsClicked={this.userDetailsClicked}
+              />
+            ) : (
+              <div>xx</div>
+            )
             }
           </div>
           <div class="col-2">
             <h2>User Details</h2>
             {user ? (
-                <div>
-                  <p>User Id: {user.userId}</p>
-                  <p>User Email: {user.email}</p>
-                  <p>Customer Id: {user.customerId}</p>
-                  <p>Timestamp: {user.created}</p>
-                  <p>Alias Count: {user.aliasesCount}</p>
-                  {
-                    user.aliases.map(alias => (
-                      <li>
-                        Alias: {alias.alias} <button onClick={() => this.aliasDetailsClicked(alias.aliasId)}>Details</button>
-                      </li>
-                    ))
-                  }
-                </div>
-              ) : (<p></p>)
+              <div>
+                <p>User Id: {user.userId}</p>
+                <p>User Email: {user.email}</p>
+                <p>Customer Id: {user.customerId}</p>
+                <p>Timestamp: {user.created}</p>
+                <p>Alias Count: {user.aliasesCount}</p>
+                {
+                  user.aliases.map(alias => (
+                    <li>
+                      Alias: {alias.alias} <button onClick={() => this.aliasDetailsClicked(alias.aliasId)}>Details</button>
+                    </li>
+                  ))
+                }
+              </div>
+            ) : (<p></p>)
             }
           </div>
           <div class="col-2">
             <h2>Alias Details</h2>
             {alias ? (
-                <div>
-                  <p>Alias Id: {alias.aliasId}</p>
-                  <p>Alias: {alias.alias}</p>
-                  <p>Timestamp: {alias.created}</p>
-                  <p>Type: {alias.type}</p>
-                  <p>Message Count: {alias.mailCount}</p>
-                </div>
-              ) : (
-                <div></div>
-              )
+              <div>
+                <p>Alias Id: {alias.aliasId}</p>
+                <p>Alias: {alias.alias}</p>
+                <p>Timestamp: {alias.created}</p>
+                <p>Type: {alias.type}</p>
+                <p>Message Count: {alias.mailCount}</p>
+              </div>
+            ) : (
+              <div></div>
+            )
             }
           </div>
         </div>
@@ -222,7 +227,7 @@ const Aliases = (props) => {
     }
     fetchAliases();
   }, [])
-  
+
   return (
     <table>
       <thead>
@@ -232,27 +237,27 @@ const Aliases = (props) => {
         </tr>
       </thead>
       <tbody>
-      {
-        aliases.map(alias => (
-          <tr><td>{new Date(alias.created).toString()}</td><td>{alias.alias}</td></tr>
-        ))
-      }
+        {
+          aliases.map(alias => (
+            <tr><td>{new Date(alias.created).toString()}</td><td>{alias.alias}</td></tr>
+          ))
+        }
       </tbody>
     </table>
   )
 }
 
 class Main extends React.Component {
-  state = {redirect: false};
+  state = { redirect: false };
 
   setRedirect = () => {
-    this.setState({redirect: true})
+    this.setState({ redirect: true })
   }
 
   goToDashboard = () => {
     if (this.state.redirect) {
       return <Redirect to="/dashboard" />
-    }    
+    }
   }
 
   logout = () => {
@@ -269,7 +274,7 @@ class Main extends React.Component {
         ) : (<div></div>)}
         <Switch>
           <Route exact path={["/", "/logout"]}>
-            <Login setRedirect={this.setRedirect}/>
+            <Login setRedirect={this.setRedirect} />
             {this.goToDashboard()}
             {/* {loggedIn ? <Redirect to="/dashboard" /> : <PublicHomePage />} */}
           </Route>
@@ -287,16 +292,16 @@ class Main extends React.Component {
 
 class Login extends React.Component {
   state = {
-    username: '', 
+    username: '',
     password: ''
   }
 
   usernameChanged = (e) => {
-    this.setState({username: e.target.value});
+    this.setState({ username: e.target.value });
   };
 
   passwordChanged = (e) => {
-    this.setState({password: e.target.value});
+    this.setState({ password: e.target.value });
   };
 
   loginClicked = async (e) => {
@@ -304,9 +309,9 @@ class Login extends React.Component {
     const username = this.state.username;
     const password = this.state.password;
     const res = await fetch(`${process.env.REACT_APP_API_URL}/admin`, {
-      method: 'post', 
-      headers: {'Content-type': 'application/json'}, 
-      body: JSON.stringify({username: username, password: password})
+      method: 'post',
+      headers: { 'Content-type': 'application/json' },
+      body: JSON.stringify({ username: username, password: password })
     });
     const json = await res.json();
     if (json.data) {
@@ -338,7 +343,7 @@ class Login extends React.Component {
 }
 
 ReactDOM.render(
-  <Main />, 
+  <Main />,
   document.getElementById('root')
 );
 
