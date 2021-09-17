@@ -72,8 +72,8 @@ class SearchBar extends React.Component {
           placeholder="Search..."
           value={this.props.filterText}
           onChange={e => this.props.filterTextChanged(e.target.value)}
-        // onChange={this.handleFilterTextChange}
         />
+        <button>clear</button>
       </form>
     );
   }
@@ -105,6 +105,14 @@ class FilteredUsersTableOrig extends React.Component {
     });
   }
 
+  clearSearch = () => {
+    this.setState({
+      user: null,
+      alias: null,
+      filterText: ''
+    })
+  }
+
   userDetailsClicked = async (userId) => {
     this.setState({ alias: null })
     const res = await fetch(`${process.env.REACT_APP_API_URL}/admin/user/${userId}`,
@@ -119,7 +127,8 @@ class FilteredUsersTableOrig extends React.Component {
         email: user.data[0].email,
         created: user.data[0].created,
         aliasesCount: user.data[0].aliasesCount,
-        aliases: user.data[0].aliases
+        aliases: user.data[0].aliases,
+        customerId: user.data[0].customerId
       }
     }));
   }
@@ -157,6 +166,7 @@ class FilteredUsersTableOrig extends React.Component {
             <SearchBar
               filterText={this.state.filterText}
               filterTextChanged={this.filterTextChanged}
+              clearSearch={this.clearSearch}
             />
             {this.state.users ? (
               <UsersTable
@@ -165,7 +175,7 @@ class FilteredUsersTableOrig extends React.Component {
                 userDetailsClicked={this.userDetailsClicked}
               />
             ) : (
-              <div>xx</div>
+              null
             )
             }
           </div>
