@@ -142,6 +142,14 @@ class FilteredUsersTableOrig extends React.Component {
     this.setState({ alias: json.data[0] });
   }
 
+  paidClicked = () => {
+    const location = {
+      pathname: '/paid',
+      state: { prevPath: window.location.pathname }
+    }
+    this.props.history.push(location)
+  }
+
   allAliasesClicked = async () => {
     const location = {
       pathname: '/aliases',
@@ -158,7 +166,7 @@ class FilteredUsersTableOrig extends React.Component {
         <div class="col-container">
           <div class="col-2">&nbsp;</div>
           <div class="col-2"><button onClick={this.allAliasesClicked}>All Aliases</button></div>
-          <div class="col-1">&nbsp;</div>
+          <div class="col-1"><button onClick={this.paidClicked}>Paid Customers</button></div>
         </div>
         <div class="col-container">
           <div class="col-1">
@@ -223,6 +231,44 @@ class FilteredUsersTableOrig extends React.Component {
 
 const FilteredUsersTable = withRouter(FilteredUsersTableOrig);
 
+const PaidCustomers = () => {
+  const [paidCustomers, setPaidCustomers] = React.useState([]);
+
+  useEffect(() => {
+    async function fetchPaidCustomers() {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/admin/paid`,
+        { headers: { 'Authorization': localStorage.getItem('token') } }
+      )
+      const paidCustomers = await res.json()
+      setPaidCustomers(paidCustomers.data);
+    }
+    fetchPaidCustomers();
+  }, [])
+
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>Created</th>
+          <th>Email</th>
+          <th>Customer ID</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          paidCustomers.map(paidCustomer => (
+            <tr>
+              <td>{new Date(paidCustomer.created).toString()}</td>
+              <td>{paidCustomer.email}</td>
+              <td>{paidCustomer.customerId}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  )
+}
+
 const Aliases = (props) => {
   const [aliases, setAliases] = React.useState([]);
 
@@ -243,13 +289,16 @@ const Aliases = (props) => {
       <thead>
         <tr>
           <th>Created</th>
-          <th>Alias</th>
+          <th>Email</th>
         </tr>
       </thead>
       <tbody>
         {
           aliases.map(alias => (
-            <tr><td>{new Date(alias.created).toString()}</td><td>{alias.alias}</td></tr>
+            <tr>
+              <td>{new Date(alias.created).toString()}</td>
+              <td>{alias.alias}</td>
+            </tr>
           ))
         }
       </tbody>
@@ -290,6 +339,9 @@ class Main extends React.Component {
           </Route>
           <Route path="/dashboard">
             {localStorage.getItem('token') ? <FilteredUsersTable /> : <div></div>}
+          </Route>
+          <Route path="/paid">
+            <PaidCustomers />
           </Route>
           <Route path="/Aliases">
             <Aliases />

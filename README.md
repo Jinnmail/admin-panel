@@ -49,8 +49,10 @@ exit
 ```
 cd /var/www/html
 screen -x tab
-ctrl c
-git pull && npm run build && serve -s build
+ctrl c         ________
+git pull               |
+npm run build          |-------separate commands for small instances
+serve -s build ________|
 detach from screen
 ctrl a d
 sudo service apache2 restart
